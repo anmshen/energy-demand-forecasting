@@ -1,0 +1,50 @@
+Evaluating model: example_model  |  test year: 2023  |  n_eval_days: 2
+Loading energy demand data …
+  Contiguity check : PASSED
+  Zones (8)    : ['ME', 'NH', 'VT', 'CT', 'RI', 'SEMA', 'WCMA', 'NEMA_BOST']
+  Time range        : 2019-01-01 00:00:00  →  2023-12-31 23:00:00
+  Total hours       : 43824
+
+Test configuration
+  Model    : example_model
+  Test year: 2023
+  # dates  : 2
+  Dates    : 2023-12-30  →  2023-12-31
+
+Loaded model : example_model  (StubModel)
+
+Running inference …
+  [  1/2]  2023-12-30
+  [  2/2]  2023-12-31
+
+=================================================================
+Results  —  model: example_model   test year: 2023
+=================================================================
+  ME                    MAPE:    2.93 %
+  NH                    MAPE:    5.21 %
+  VT                    MAPE:    5.78 %
+  CT                    MAPE:    4.54 %
+  RI                    MAPE:    4.60 %
+  SEMA                  MAPE:    4.08 %
+  WCMA                  MAPE:    3.95 %
+  NEMA_BOST             MAPE:    4.39 %
+
+  Overall               MAPE:    4.43 %
+=================================================================
+
+CURRENT PT 1 MODEL_DIR
+
+=================================================================
+Results  —  model: our_model   test year: 2023
+=================================================================
+  ME                    MAPE:    5.56 %
+  NH                    MAPE:    7.19 %
+  VT                    MAPE:    8.12 %
+  CT                    MAPE:    7.47 %
+  RI                    MAPE:    6.51 %
+  SEMA                  MAPE:    6.49 %
+  WCMA                  MAPE:   10.63 %
+  NEMA_BOST             MAPE:    5.04 %
+
+  Overall               MAPE:    7.13 %
+=================================================================

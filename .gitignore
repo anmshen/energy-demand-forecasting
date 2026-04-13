@@ -1,0 +1,34 @@
+# Temporary/Output Files
+*.out
+*.err
+*.log
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Model Checkpoints (keep evaluation/our_model/best_model.pt and norm_stats.pt, exclude checkpoints)
+checkpoints/
+*.pt.backup
+
+# Temporary Data/Results
+*.csv.tmp
+temp/
+tmp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
