@@ -40,7 +40,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 
-import ashen05.assignment3.evaluation.example_model.submodule as submodule  # To test whether submodules can be loaded
+import submodule  # To test whether submodules can be loaded
 
 
 class StubModel(nn.Module):

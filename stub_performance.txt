@@ -37,14 +37,17 @@ CURRENT PT 1 MODEL_DIR
 =================================================================
 Results  —  model: our_model   test year: 2023
 =================================================================
-  ME                    MAPE:    5.56 %
-  NH                    MAPE:    7.19 %
-  VT                    MAPE:    8.12 %
-  CT                    MAPE:    7.47 %
-  RI                    MAPE:    6.51 %
-  SEMA                  MAPE:    6.49 %
-  WCMA                  MAPE:   10.63 %
-  NEMA_BOST             MAPE:    5.04 %
+  ME                    MAPE:    4.37 %
+  NH                    MAPE:    6.32 %
+  VT                    MAPE:    5.57 %
+  CT                    MAPE:    9.73 %
+  RI                    MAPE:    8.80 %
+  SEMA                  MAPE:    6.41 %
+  WCMA                  MAPE:    9.67 %
+  NEMA_BOST             MAPE:    8.28 %
 
-  Overall               MAPE:    7.13 %
+  Overall               MAPE:    7.39 %
 =================================================================
+
+
+

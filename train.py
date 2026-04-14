@@ -28,7 +28,10 @@ from torch.utils.data import Dataset, DataLoader
 from pathlib import Path
 from datetime import datetime
 
-from evaluation.our_model.model import CNNTransformerModel
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from evaluation.as_nl.model import CNNTransformerModel
 
 # ============================================================
 # Paths  (same as evaluate.py)
@@ -245,13 +248,19 @@ def collate_skip_none(batch):
 
 
 # ============================================================
-# Loss: MAPE
+# Loss: MSE
 # ============================================================
 
-def mape_loss(pred, target, epsilon=1.0):
+def mse_loss(pred, target):
     """
-    Robust MAPE: handles all energy values (including small ones).
-    epsilon prevents division by zero for very small targets.
+    Mean Squared Error loss (per spec: MSE preferred for training stability).
+    """
+    return ((pred - target) ** 2).mean()
+
+
+def mape_metric(pred, target, epsilon=1.0):
+    """
+    Compute MAPE for logging/evaluation purposes (not used for gradient updates).
     """
     return ((pred - target).abs() / (target.abs() + epsilon)).mean() * 100
 
@@ -263,6 +272,7 @@ def mape_loss(pred, target, epsilon=1.0):
 def run_epoch(model, loader, optimizer, device, train=True):
     model.train() if train else model.eval()
     total_loss = 0.0
+    total_mape = 0.0
     n_batches  = 0
     ctx = torch.enable_grad() if train else torch.no_grad()
     with ctx:
@@ -274,7 +284,8 @@ def run_epoch(model, loader, optimizer, device, train=True):
 
             # CNN-Transformer forward: takes full spatial weather + time features
             pred = model(hist_w, hist_e, fut_w, hist_time_feats, fut_time_feats)  # (B, 24, Z)
-            loss = mape_loss(pred, target)
+            loss = mse_loss(pred, target)
+            mape = mape_metric(pred, target)
 
             if train:
                 optimizer.zero_grad()
@@ -283,9 +294,10 @@ def run_epoch(model, loader, optimizer, device, train=True):
                 optimizer.step()
 
             total_loss += loss.item()
+            total_mape += mape.item()
             n_batches  += 1
 
-    return total_loss / max(n_batches, 1)
+    return total_loss / max(n_batches, 1), total_mape / max(n_batches, 1)
 
 
 # ============================================================
@@ -385,35 +397,35 @@ def main():
     )
 
     # --- Training with Early Stopping ---
-    best_val_mape = float('inf')
+    best_val_loss = float('inf')
     patience = 10  # Number of epochs with no improvement before stopping
     patience_counter = 0
     
     print(f"\nTraining for up to {args.epochs} epochs (early stopping patience={patience})…\n")
-    print(f"{'Epoch':>6}  {'Train MAPE':>12}  {'Val MAPE':>10}  {'LR':>10}  {'Patience':>8}")
+    print(f"{'Epoch':>6}  {'Train Loss':>12}  {'Val MAPE':>10}  {'LR':>10}  {'Patience':>8}")
     print("-" * 55)
 
     for epoch in range(1, args.epochs + 1):
-        train_mape = run_epoch(model, train_loader, optimizer, device, train=True)
-        val_mape   = run_epoch(model, val_loader,   optimizer, device, train=False)
+        train_loss, train_mape = run_epoch(model, train_loader, optimizer, device, train=True)
+        val_loss, val_mape = run_epoch(model, val_loader, optimizer, device, train=False)
         scheduler.step()
 
         lr_now = optimizer.param_groups[0]['lr']
-        print(f"{epoch:>6}  {train_mape:>11.2f}%  {val_mape:>9.2f}%  {lr_now:>10.2e}  {patience_counter:>8}")
+        print(f"{epoch:>6}  {train_loss:>12.4f}  {val_mape:>9.2f}%  {lr_now:>10.2e}  {patience_counter:>8}")
 
-        if val_mape < best_val_mape:
-            best_val_mape = val_mape
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
             patience_counter = 0  # Reset patience counter
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             torch.save(model.state_dict(), save_dir / f"best_model_{timestamp}.pt")
-            print(f"         ↑ best model saved  (val MAPE {best_val_mape:.2f} %)")
+            print(f"         ↑ best model saved  (val MAPE {val_mape:.2f} %)")
         else:
             patience_counter += 1
             if patience_counter >= patience:
                 print(f"\nEarly stopping: no improvement for {patience} epochs")
                 break
 
-    print(f"\nTraining complete.  Best val MAPE: {best_val_mape:.2f} %")
+    print(f"\nTraining complete.")
     
     # Find the best timestamped model (keeping it unique, not overwritten)
     best_models = list(save_dir.glob("best_model_*.pt"))

@@ -13,11 +13,11 @@
 module load class/default
 module load cs137/2026spring
 
-N_DAYS=${1:-2}
+N_DAYS=${1:-25}
 
 # All paths anchored to the evaluation/ directory (where evaluate.py lives)
 EVAL_DIR="/cluster/tufts/c26sp1cs0137/ashen05/assignment3/evaluation"
-MODEL_NAME="our_model"
+MODEL_NAME="as_nl"
 MODEL_DIR="$EVAL_DIR/$MODEL_NAME"
 CHECKPOINTS_DIR="$MODEL_DIR/checkpoints"
 
@@ -61,3 +61,8 @@ cp "$CHECKPOINTS_DIR/norm_stats.pt"  "$MODEL_DIR/norm_stats.pt"
 cd "$EVAL_DIR"
 echo "=== Evaluating: $MODEL_NAME for $N_DAYS days ==="
 python evaluate.py $MODEL_NAME $N_DAYS
+
+# Also evaluate the stub/baseline model
+echo ""
+echo "=== Evaluating: example_model (stub baseline) for $N_DAYS days ==="
+python evaluate.py example_model $N_DAYS
