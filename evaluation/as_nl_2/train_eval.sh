@@ -5,7 +5,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:2
 #SBATCH --time=24:00:00
-#SBATCH --mem=64G
+#SBATCH --mem=128G
 #SBATCH --output=train_eval_%j.out
 #SBATCH --error=train_eval_%j.err
 
