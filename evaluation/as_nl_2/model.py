@@ -550,19 +550,7 @@ def get_model(metadata: dict) -> CNNTransformerModel:
         energy_std           = energy_std,
     )
 
-    # ── Load weights ──────────────────────────────────────────────────────────
-    weights_path = model_dir / "best_model.pt"
-    if not weights_path.exists():
-        candidates = sorted(model_dir.glob("best_model_*.pt"))
-        if candidates:
-            weights_path = candidates[-1]
-            print(f"  best_model.pt not found; using {weights_path.name}")
-
-    if weights_path.exists():
-        state = torch.load(weights_path, map_location="cpu", weights_only=True)
-        model.load_state_dict(state)
-        print(f"  Loaded weights from {weights_path}")
-    else:
-        print(f"  WARNING: No weights found in {model_dir} — model has random weights.")
-
+    # Always start from scratch (do not load checkpoint weights)
+    # This avoids state_dict mismatches and missing key errors when retraining
+    print(f"  WARNING: Not loading any weights; model will be trained from scratch.")
     return model

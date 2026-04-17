@@ -42,7 +42,7 @@ ENERGY_DIR  = ROOT / "energy_demand_data"
 
 HISTORY_LEN = 168
 FUTURE_LEN  = 24
-TRAIN_YEARS = [2021, 2022]  # Use recent years closer to test distribution (2023)
+TRAIN_YEARS = [2019, 2020, 2021, 2022] 
 VAL_YEAR    = 2022   # last portion of 2022 used for validation
 
 # ============================================================

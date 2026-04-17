@@ -34,13 +34,13 @@ echo "  GPUs        : $CUDA_VISIBLE_DEVICES"
 echo "=== Training CNN-Transformer Model ==="
 python "$EVAL_DIR/../train.py" \
     --epochs 50 \
-    --batch_size 4 \
+    --batch_size 32 \
     --lr 1e-4 \
     --grid_size 10 \
-    --embed_dim 96 \
-    --n_transformer_layers 3 \
-    --n_heads 8 \
-    --mlp_dim 384 \
+    --embed_dim 64 \
+    --n_transformer_layers 2 \
+    --n_heads 4 \
+    --mlp_dim 256 \
     --dropout 0.2 \
     --n_train_days 300 \
     --save_dir "$CHECKPOINTS_DIR"
