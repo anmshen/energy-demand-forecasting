@@ -633,52 +633,78 @@ class CNNEncoderDecoderModel(nn.Module):
 
 def get_model(metadata: dict) -> CNNEncoderDecoderModel:
     """
-    Instantiate the Encoder-Decoder model and load weights + norm stats.
-    Switch the return type / class here if you want to serve the Part 1 baseline.
+    Instantiate CNNEncoderDecoderModel with architecture hyperparameters and
+    normalization stats loaded from norm_stats.pt, then load trained weights.
+    All hyperparameters are saved into norm_stats.pt by train.py, so the
+    reconstructed model always matches the saved checkpoint exactly.
     """
-    model_dir = Path(__file__).parent
-
+    model_dir  = Path(__file__).parent
     stats_path = model_dir / "norm_stats.pt"
+
+    # ── Load norm stats + architecture hyperparameters ────────────────────────
     if stats_path.exists():
-        stats        = torch.load(stats_path, weights_only=True)
+        stats        = torch.load(stats_path, map_location="cpu", weights_only=True)
         weather_mean = torch.tensor(stats["weather_mean"], dtype=torch.float32)
         weather_std  = torch.tensor(stats["weather_std"],  dtype=torch.float32)
         energy_mean  = np.array(stats["energy_mean"], dtype=np.float32)
         energy_std   = np.array(stats["energy_std"],  dtype=np.float32)
-        print(f"  Loaded norm stats from {stats_path}")
+        history_len      = int(stats.get("history_len",      168))
+        grid_size        = int(stats.get("grid_size",         10))
+        embed_dim        = int(stats.get("embed_dim",         96))
+        n_encoder_layers = int(stats.get("n_encoder_layers",   3))
+        n_decoder_layers = int(stats.get("n_decoder_layers",   3))
+        n_heads          = int(stats.get("n_heads",            8))
+        mlp_dim          = int(stats.get("mlp_dim",          384))
+        dropout          = float(stats.get("dropout",         0.2))
+        print(
+            f"  Loaded norm_stats.pt: history_len={history_len}, "
+            f"embed_dim={embed_dim}, n_encoder_layers={n_encoder_layers}, "
+            f"n_decoder_layers={n_decoder_layers}, n_heads={n_heads}, "
+            f"grid_size={grid_size}"
+        )
     else:
-        print(f"  WARNING: {stats_path} not found — using default norm constants.")
+        print("  WARNING: norm_stats.pt not found — using default hyperparameters")
         weather_mean = weather_std = energy_mean = energy_std = None
+        history_len      = 168
+        grid_size        = 10
+        embed_dim        = 96
+        n_encoder_layers = 3
+        n_decoder_layers = 3
+        n_heads          = 8
+        mlp_dim          = 384
+        dropout          = 0.2
 
+    # ── Build model ───────────────────────────────────────────────────────────
     model = CNNEncoderDecoderModel(
-        n_zones              = metadata["n_zones"],
-        history_len          = metadata.get("history_len", 168),
-        future_len           = metadata.get("future_len",  24),
-        grid_size            = 10,
-        embed_dim            = 96,
-        n_encoder_layers     = 3,
-        n_decoder_layers     = 3,
-        n_heads              = 8,
-        mlp_dim              = 384,
-        dropout              = 0.2,
-        weather_mean         = weather_mean,
-        weather_std          = weather_std,
-        energy_mean          = energy_mean,
-        energy_std           = energy_std,
+        n_zones          = metadata["n_zones"],
+        history_len      = history_len,
+        future_len       = metadata.get("future_len", 24),
+        grid_size        = grid_size,
+        embed_dim        = embed_dim,
+        n_encoder_layers = n_encoder_layers,
+        n_decoder_layers = n_decoder_layers,
+        n_heads          = n_heads,
+        mlp_dim          = mlp_dim,
+        dropout          = dropout,
+        weather_mean     = weather_mean,
+        weather_std      = weather_std,
+        energy_mean      = energy_mean,
+        energy_std       = energy_std,
     )
 
-    weights_path = model_dir / "best_model.pt"
-    if not weights_path.exists():
-        timestamped = sorted(model_dir.glob("best_model_*.pt"))
-        if timestamped:
-            weights_path = timestamped[-1]
-            print(f"  best_model.pt not found; using: {weights_path.name}")
+    # ── Load trained weights ──────────────────────────────────────────────────
+    ckpt_path = model_dir / "best_model.pt"
+    if not ckpt_path.exists():
+        candidates = sorted(model_dir.glob("best_model_*.pt"), reverse=True)
+        ckpt_path  = candidates[0] if candidates else None
 
-    if weights_path.exists():
-        state = torch.load(weights_path, map_location="cpu", weights_only=True)
+    if ckpt_path and ckpt_path.exists():
+        state = torch.load(ckpt_path, map_location="cpu", weights_only=True)
+        if isinstance(state, dict) and "model_state_dict" in state:
+            state = state["model_state_dict"]
         model.load_state_dict(state)
-        print(f"  Loaded weights from {weights_path}")
+        print(f"  Loaded weights from {ckpt_path}")
     else:
-        print(f"  WARNING: No weights found in {model_dir} — random weights.")
+        print("  WARNING: No checkpoint found — model is randomly initialized!")
 
     return model

@@ -28,7 +28,9 @@ from torch.utils.data import Dataset, DataLoader
 from pathlib import Path
 from datetime import datetime
 
-from evaluation.as_nl.model import CNNEncoderDecoderModel
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from evaluation.part2_best_model.model import CNNEncoderDecoderModel
 
 # ============================================================
 # Paths  (same as evaluate.py)
@@ -39,8 +41,26 @@ ENERGY_DIR  = ROOT / "energy_demand_data"
 
 HISTORY_LEN = 168
 FUTURE_LEN  = 24
-TRAIN_YEARS = [2021, 2022]  # Use recent years closer to test distribution (2023)
+TRAIN_YEARS = [2019, 2020, 2021, 2022]  # Use recent years closer to test distribution (2023)
 VAL_YEAR    = 2022   # last portion of 2022 used for validation
+
+#!/usr/bin/env python3
+"""
+train.py — Part 1: CNN-Transformer Patch Architecture
+=====================================================
+
+Usage:
+    python train.py [--epochs 50] [--batch_size 4] [--lr 5e-4] [--grid_size 10]
+                    [--n_train_days 300] [--save_dir ./checkpoints]
+
+What this script does:
+  1. Loads weather (.pt) and energy (.csv) data from the cluster paths.
+  2. Computes normalization statistics (mean/std) from the training split.
+  3. Trains CNNTransformerModel: CNN downsamples weather to spatial patches,
+     concatenates with tabular tokens, feeds to Transformer, predicts 24-hour ahead.
+  4. Saves the best checkpoint (lowest val MAPE) to <save_dir>/best_model.pt.
+  5. Saves normalization stats to <save_dir>/norm_stats.pt for evaluation.
+"""
 
 # ============================================================
 # Argument parsing
@@ -341,9 +361,23 @@ def main():
     train_energy_rows = np.unique(np.clip(train_energy_rows, 0, len(energy_values) - 1))
     e_mean, e_std = compute_energy_stats(energy_values[train_energy_rows])
 
-    # Save stats for reference
-    stats = {"weather_mean": w_mean.tolist(), "weather_std": w_std.tolist(),
-             "energy_mean": e_mean.tolist(), "energy_std": e_std.tolist()}
+    # Save norm stats AND architecture hyperparameters so get_model() can
+    # reconstruct the model exactly without hardcoded values.
+    stats = {
+        "weather_mean":      w_mean.tolist(),
+        "weather_std":       w_std.tolist(),
+        "energy_mean":       e_mean.tolist(),
+        "energy_std":        e_std.tolist(),
+        # Architecture hyperparameters
+        "history_len":       HISTORY_LEN,
+        "grid_size":         args.grid_size,
+        "embed_dim":         args.embed_dim,
+        "n_encoder_layers":  args.n_transformer_layers,
+        "n_decoder_layers":  args.n_transformer_layers,
+        "n_heads":           args.n_heads,
+        "mlp_dim":           args.mlp_dim,
+        "dropout":           args.dropout,
+    }
     torch.save(stats, save_dir / "norm_stats.pt")
     print(f"  Norm stats saved to {save_dir / 'norm_stats.pt'}")
 

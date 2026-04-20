@@ -33,9 +33,9 @@ echo "  GPUs        : $CUDA_VISIBLE_DEVICES"
 # Run training  train.py is one level above evaluation/
 echo "=== Training CNN-EncodeDecoder Model ==="
 python "$EVAL_DIR/../train.py" \
-    --epochs 50 \
+    --epochs 30 \
     --batch_size 4 \
-    --lr 5e-4 \
+    --lr 2e-4 \
     --grid_size 10 \
     --embed_dim 128 \
     --n_transformer_layers 3 \
