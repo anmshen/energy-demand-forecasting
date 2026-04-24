@@ -425,7 +425,7 @@ def main():
 
     # --- Training with Early Stopping ---
     best_val_loss = float('inf')
-    patience = 10
+    patience = 15
     patience_counter = 0
 
     print(f"\nTraining for up to {args.epochs} epochs (early stopping patience={patience})…\n")

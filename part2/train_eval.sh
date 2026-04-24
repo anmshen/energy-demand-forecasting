@@ -35,14 +35,14 @@ echo "=== Training CNN-EncodeDecoder Model ==="
 python "$EVAL_DIR/../train.py" \
     --epochs 30 \
     --batch_size 4 \
-    --lr 2e-4 \
+    --lr 1e-3 \
     --grid_size 10 \
     --embed_dim 128 \
     --n_transformer_layers 3 \
     --n_heads 8 \
     --mlp_dim 512 \
     --dropout 0.3 \
-    --n_train_days 300 \
+    --n_train_days 600 \
     --save_dir "$CHECKPOINTS_DIR"
 
 # Copy the most recently saved checkpoint and norm stats next to model.py
