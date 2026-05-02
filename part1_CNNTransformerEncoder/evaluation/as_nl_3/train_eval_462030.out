@@ -1,0 +1,212 @@
+Starting training + evaluation for model: as_nl_3
+  MODEL_DIR   : /cluster/tufts/c26sp1cs0137/ashen05/assignment3/evaluation/as_nl_3
+  CHECKPOINTS : /cluster/tufts/c26sp1cs0137/ashen05/assignment3/evaluation/as_nl_3/checkpoints_g
+  RUN_TAG     : g
+  GPUs        : 0,1
+
+=== Hyperparameters ===
+  epochs       : 75
+  batch_size   : 8
+  lr           : 1e-4
+  history_len  : 168
+  grid_size    : 10
+  embed_dim    : 128
+  n_layers     : 3
+  n_heads      : 8
+  mlp_dim      : 256
+  dropout      : 0.2
+  n_train_days : 1400
+  n_val_days   : 30
+
+=== Training ===
+Device: cuda
+Loading energy data …
+  Zones: 8   Rows: 43824
+  Train days: 700   Val days: 30
+Computing normalization statistics …
+Computing weather normalization statistics …
+  Weather mean: [282.7954406738281, 72.81248474121094, 7.840609550476074, 0.7575874328613281, 0.6329882740974426, 0.1313876211643219, 6.009296894073486]
+  Weather std : [11.315779685974121, 16.094432830810547, 4.693218231201172, 3.869842767715454, 3.985419511795044, 0.7441338896751404, 18.558351516723633]
+Computing energy statistics …
+  Energy mean per zone: [1326.7906  1299.7634   569.76575 3184.5938   889.7547  1587.8804
+ 1821.0237  2659.4746 ]
+  Energy std  per zone: [214.55197 261.10974 122.73918 719.3552  202.54819 384.47266 345.9542
+ 536.3154 ]
+  Norm stats saved to /cluster/tufts/c26sp1cs0137/ashen05/assignment3/evaluation/as_nl_3/checkpoints_g/norm_stats.pt
+  Using 2 GPUs via DataParallel
+Model parameters: 3,981,480
+
+Training for up to 75 epochs (early stopping patience=15) …
+
+  Epoch    Train Loss    Val MAPE          LR  Patience
+------------------------------------------------------------
+      1        0.7401       9.93%    1.00e-04         0
+         ↑ best model saved  (val MAPE 9.93 %)
+      2        0.4430       9.24%    1.00e-04         0
+         ↑ best model saved  (val MAPE 9.24 %)
+      3        0.3229       7.50%    1.00e-04         0
+         ↑ best model saved  (val MAPE 7.50 %)
+      4        0.2610       6.29%    1.00e-04         0
+         ↑ best model saved  (val MAPE 6.29 %)
+      5        0.2228       6.16%    1.00e-04         0
+         ↑ best model saved  (val MAPE 6.16 %)
+      6        0.1890       6.48%    1.00e-04         0
+      7        0.1787       6.34%    1.00e-04         1
+      8        0.1607       6.81%    1.00e-04         2
+      9        0.1476       5.97%    1.00e-04         3
+         ↑ best model saved  (val MAPE 5.97 %)
+     10        0.1340       5.97%    1.00e-04         0
+     11        0.1255       5.44%    1.00e-04         1
+         ↑ best model saved  (val MAPE 5.44 %)
+     12        0.1115       5.34%    1.00e-04         0
+         ↑ best model saved  (val MAPE 5.34 %)
+     13        0.1111       5.50%    1.00e-04         0
+     14        0.1077       6.40%    1.00e-04         1
+     15        0.1019       6.29%    1.00e-04         2
+     16        0.1006       5.93%    1.00e-04         3
+     17        0.0856       5.00%    5.00e-05         4
+         ↑ best model saved  (val MAPE 5.00 %)
+     18        0.0789       5.16%    5.00e-05         0
+     19        0.0779       4.60%    5.00e-05         1
+         ↑ best model saved  (val MAPE 4.60 %)
+     20        0.0772       5.21%    5.00e-05         0
+     21        0.0767       4.82%    5.00e-05         1
+     22        0.0752       4.73%    5.00e-05         2
+     23        0.0724       5.51%    5.00e-05         3
+     24        0.0684       4.90%    2.50e-05         4
+     25        0.0675       5.16%    2.50e-05         5
+     26        0.0666       5.39%    2.50e-05         6
+     27        0.0660       5.11%    2.50e-05         7
+     28        0.0627       4.81%    1.25e-05         8
+     29        0.0635       4.84%    1.25e-05         9
+     30        0.0616       4.87%    1.25e-05        10
+     31        0.0609       4.83%    1.25e-05        11
+     32        0.0613       4.99%    6.25e-06        12
+     33        0.0601       4.71%    6.25e-06        13
+     34        0.0597       4.73%    6.25e-06        14
+
+Early stopping at epoch 34.
+
+Best val MAPE: 4.60%
+
+=== Copying artifacts ===
+  Checkpoint : /cluster/tufts/c26sp1cs0137/ashen05/assignment3/evaluation/as_nl_3/checkpoints_g/best_model_20260417_182603.pt
+  Copied to  : /cluster/tufts/c26sp1cs0137/ashen05/assignment3/evaluation/as_nl_3/best_model.pt
+
+=== Evaluating as_nl_3 (25 days) ===
+Evaluating model: as_nl_3  |  test year: 2023  |  n_eval_days: 25
+Loading energy demand data …
+  Contiguity check : PASSED
+  Zones (8)    : ['ME', 'NH', 'VT', 'CT', 'RI', 'SEMA', 'WCMA', 'NEMA_BOST']
+  Time range        : 2019-01-01 00:00:00  →  2023-12-31 23:00:00
+  Total hours       : 43824
+
+Test configuration
+  Model    : as_nl_3
+  Test year: 2023
+  # dates  : 25
+  Dates    : 2023-12-07  →  2023-12-31
+  Loaded norm_stats.pt: history_len=168, embed_dim=128, n_layers=3, n_heads=8, grid_size=10
+  Loaded weights from /cluster/tufts/c26sp1cs0137/ashen05/assignment3/evaluation/as_nl_3/best_model.pt
+
+Loaded model : as_nl_3  (CNNTransformerModel)
+
+Running inference …
+  [  1/25]  2023-12-07
+  [  2/25]  2023-12-08
+  [  3/25]  2023-12-09
+  [  4/25]  2023-12-10
+  [  5/25]  2023-12-11
+  [  6/25]  2023-12-12
+  [  7/25]  2023-12-13
+  [  8/25]  2023-12-14
+  [  9/25]  2023-12-15
+  [ 10/25]  2023-12-16
+  [ 11/25]  2023-12-17
+  [ 12/25]  2023-12-18
+  [ 13/25]  2023-12-19
+  [ 14/25]  2023-12-20
+  [ 15/25]  2023-12-21
+  [ 16/25]  2023-12-22
+  [ 17/25]  2023-12-23
+  [ 18/25]  2023-12-24
+  [ 19/25]  2023-12-25
+  [ 20/25]  2023-12-26
+  [ 21/25]  2023-12-27
+  [ 22/25]  2023-12-28
+  [ 23/25]  2023-12-29
+  [ 24/25]  2023-12-30
+  [ 25/25]  2023-12-31
+
+=================================================================
+Results  —  model: as_nl_3   test year: 2023
+=================================================================
+  ME                    MAPE:    6.55 %
+  NH                    MAPE:    4.51 %
+  VT                    MAPE:    5.28 %
+  CT                    MAPE:    4.52 %
+  RI                    MAPE:    4.88 %
+  SEMA                  MAPE:    5.72 %
+  WCMA                  MAPE:    3.80 %
+  NEMA_BOST             MAPE:    4.62 %
+
+  Overall               MAPE:    4.98 %
+=================================================================
+
+=== Evaluating example_model (25 days) ===
+Evaluating model: example_model  |  test year: 2023  |  n_eval_days: 25
+Loading energy demand data …
+  Contiguity check : PASSED
+  Zones (8)    : ['ME', 'NH', 'VT', 'CT', 'RI', 'SEMA', 'WCMA', 'NEMA_BOST']
+  Time range        : 2019-01-01 00:00:00  →  2023-12-31 23:00:00
+  Total hours       : 43824
+
+Test configuration
+  Model    : example_model
+  Test year: 2023
+  # dates  : 25
+  Dates    : 2023-12-07  →  2023-12-31
+
+Loaded model : example_model  (StubModel)
+
+Running inference …
+  [  1/25]  2023-12-07
+  [  2/25]  2023-12-08
+  [  3/25]  2023-12-09
+  [  4/25]  2023-12-10
+  [  5/25]  2023-12-11
+  [  6/25]  2023-12-12
+  [  7/25]  2023-12-13
+  [  8/25]  2023-12-14
+  [  9/25]  2023-12-15
+  [ 10/25]  2023-12-16
+  [ 11/25]  2023-12-17
+  [ 12/25]  2023-12-18
+  [ 13/25]  2023-12-19
+  [ 14/25]  2023-12-20
+  [ 15/25]  2023-12-21
+  [ 16/25]  2023-12-22
+  [ 17/25]  2023-12-23
+  [ 18/25]  2023-12-24
+  [ 19/25]  2023-12-25
+  [ 20/25]  2023-12-26
+  [ 21/25]  2023-12-27
+  [ 22/25]  2023-12-28
+  [ 23/25]  2023-12-29
+  [ 24/25]  2023-12-30
+  [ 25/25]  2023-12-31
+
+=================================================================
+Results  —  model: example_model   test year: 2023
+=================================================================
+  ME                    MAPE:    9.07 %
+  NH                    MAPE:    5.81 %
+  VT                    MAPE:    7.73 %
+  CT                    MAPE:    5.65 %
+  RI                    MAPE:    5.54 %
+  SEMA                  MAPE:    6.40 %
+  WCMA                  MAPE:    5.75 %
+  NEMA_BOST             MAPE:    5.39 %
+
+  Overall               MAPE:    6.42 %
+=================================================================
