@@ -1,0 +1,48 @@
+Geographic Attention Analysis — Numerical Summary
+=======================================================
+Samples averaged: 20
+Grid size: 10×10 (each cell ≈ 135×132 km²)
+
+Per-zone peak attention grid cell (row, col):
+  CT         peak at row=0, col=8  (normalized weight=1.000)
+  ME         peak at row=0, col=8  (normalized weight=1.000)
+  NEMASS     peak at row=0, col=8  (normalized weight=1.000)
+  NH         peak at row=0, col=8  (normalized weight=1.000)
+  RI         peak at row=0, col=8  (normalized weight=1.000)
+  SEMASS     peak at row=0, col=8  (normalized weight=1.000)
+  VT         peak at row=0, col=8  (normalized weight=1.000)
+  WCMASS     peak at row=0, col=8  (normalized weight=1.000)
+
+Hourly attention peak shift (row, col) across forecast hours:
+  t+01h  peak at row=8, col=0
+  t+02h  peak at row=8, col=0
+  t+03h  peak at row=9, col=2
+  t+04h  peak at row=1, col=4
+  t+05h  peak at row=5, col=9
+  t+06h  peak at row=1, col=4
+  t+07h  peak at row=0, col=7
+  t+08h  peak at row=0, col=7
+  t+09h  peak at row=1, col=9
+  t+10h  peak at row=1, col=9
+  t+11h  peak at row=0, col=8
+  t+12h  peak at row=0, col=8
+  t+13h  peak at row=0, col=8
+  t+14h  peak at row=1, col=9
+  t+15h  peak at row=1, col=9
+  t+16h  peak at row=7, col=4
+  t+17h  peak at row=1, col=6
+  t+18h  peak at row=7, col=2
+  t+19h  peak at row=1, col=6
+  t+20h  peak at row=9, col=0
+  t+21h  peak at row=9, col=3
+  t+22h  peak at row=9, col=0
+  t+23h  peak at row=8, col=0
+  t+24h  peak at row=8, col=0
+
+Interpretation notes:
+  - Row 0 = northern edge of domain, Row N = southern edge
+  - Col 0 = western edge of domain,  Col N = eastern edge
+  - The HRRR NE domain covers roughly 40°N-50°N, 81°W-63°W
+  - Tufts/Boston is approximately at row=5, col=7 in a 10×10 grid
+  - Upstream weather typically approaches from the west/northwest
+    (col < 5, row < 5), so peak attention there is physically sensible

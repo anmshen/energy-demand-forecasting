@@ -6,7 +6,7 @@ This assignment implements a neural network model to forecast energy demand for 
 ## Directory Structure
 
 ```
-assignment3/
+assignment3/part1_CNNTransformerEncoder
 ├── train.py              # Main training script
 ├── train_eval.sh         # SLURM wrapper for training + evaluation
 ├── evaluation/           # Evaluation environment
@@ -19,7 +19,9 @@ assignment3/
 │       ├── best_model.pt # Best checkpoint (loaded by train_eval.sh)
 │       ├── norm_stats.pt # Normalization statistics
 │       └── checkpoints/  # Training intermediate checkpoints
-└── stub_performance.txt  # Reference baseline performance
+│── stub_performance.txt  # Reference baseline performance
+└── part3_aattention_maps.py # plots the attention maps using part 1 model
+
 ```
 
 ## Workflow
